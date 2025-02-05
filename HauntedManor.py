@@ -1,0 +1,117 @@
+import sys
+import os
+import random
+from colorama import init as colorama_init
+from colorama import Fore
+from colorama import Style
+from Maps import maps, rooms
+from Terminal import showCursor, hideCursor, typewrite
+
+colorama_init()
+
+FASTER = 0.001
+FAST = 0.01
+NORMAL = 0.03     #TODO Make Puzzles and Ghost
+SLOW = 0.05
+STARTING_ROOM = 5
+
+global currRoom
+currRoom = 5
+
+def displayMap():
+    for i in range(len(rooms[currRoom]["map"])):
+        if i == 0 or i == len(rooms[currRoom]["map"])-1:
+            print(f'{Fore.LIGHTYELLOW_EX}' + ('_'.join(rooms[currRoom]["map"][i])) + f'{Style.RESET_ALL}')
+        else:
+            print(f'{Fore.LIGHTYELLOW_EX}' + ' '.join(rooms[currRoom]["map"][i]) + f'{Style.RESET_ALL}')
+    print()
+
+def move(_currRoom: int):
+    newRoom = _currRoom
+    
+    valid = False
+    while not valid:
+        typewrite("Where do you go? (N, S, E, W or back)", NORMAL)
+        choice = input("> ").lower()
+        match(choice):
+            case "n":
+                if newRoom > 2 and rooms[currRoom]["n"]:
+                    newRoom -= 3 
+                    valid = True
+            case "s":
+                if newRoom < 6 and rooms[currRoom]["s"]:
+                    newRoom += 3
+                    valid = True
+            case "e":
+                if newRoom != 2 and newRoom != 5 and newRoom != 8 and rooms[currRoom]["e"]:
+                    newRoom += 1
+                    valid = True
+            case "w":
+                if newRoom != 0 and newRoom != 3 and newRoom != 6 and rooms[currRoom]["w"]:
+                    newRoom -= 1
+                    valid = True
+            case "back":
+                break
+        if not valid:
+            typewrite("there is no door in that direction, Try another way...", FAST)
+    return newRoom
+
+def displayRoomMessage():
+    hideCursor()
+    typewrite((f'{Fore.YELLOW}' + rooms[currRoom]["description"] + f'{Style.RESET_ALL}'), NORMAL)
+    showCursor()
+
+def addItem(_room: int, _char: str):
+    available = []
+    for i in range(len(maps[currRoom])):
+        for j in range(len(maps[currRoom][i])):
+            if (i > 0 and i < len(maps[currRoom])-1) and (j > 0 and j < len(maps[currRoom][i])-1) and maps[_room][i][j] == ' ':
+                available.append([i, j])
+
+    chosen = random.choice(available)
+    maps[_room][chosen[0]][chosen[1]] = _char
+        
+def generateDust():
+    for room in range(len(maps)):
+        for i in range(25):
+            particles = ['.', ',', "'", "*", "`"]
+            addItem(room, f'{Fore.LIGHTBLACK_EX}' + random.choice(particles) + f'{Fore.LIGHTYELLOW_EX}')
+
+def menu():
+    global currRoom
+    
+    hideCursor()
+    typewrite(f"1|---> {Fore.WHITE}Move{Style.RESET_ALL}", FASTER)
+
+    if(rooms[currRoom]["inspect"]):
+        typewrite(f"2|---> {Fore.LIGHTYELLOW_EX}Inspect{Style.RESET_ALL}", FASTER)
+    else:
+        typewrite(f"2|---> {Fore.BLACK}Inspect{Style.RESET_ALL}", FASTER)
+
+    typewrite(f"3|---> {Fore.WHITE}Quit{Style.RESET_ALL}", FASTER)
+    showCursor()
+
+    choice = input("> ")
+
+    match(choice):
+        case "1":
+            currRoom = move(currRoom)
+        case "2":
+            print("Inspecting....") # TODO make inspect function
+        case "3":
+            sys.exit()
+ 
+def init():
+    global currRoom
+    currRoom = STARTING_ROOM
+    addItem(0, f"{Fore.LIGHTRED_EX}!{Fore.LIGHTYELLOW_EX}")
+    generateDust()
+
+init()
+quitGame = False
+while not quitGame:
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print("Room " + str(currRoom))
+    displayMap()
+    displayRoomMessage()
+    menu()
