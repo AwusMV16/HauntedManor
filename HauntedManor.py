@@ -22,11 +22,17 @@ global inventory
 inventory = []
 
 def displayMap():
+    inventoryStr = ", ".join(inventory)
     for i in range(len(rooms[currRoom]["map"])):
         if i == 0 or i == len(rooms[currRoom]["map"])-1:
             print(f'{Fore.LIGHTYELLOW_EX}' + ('_'.join(rooms[currRoom]["map"][i])) + f'{Style.RESET_ALL}')
         else:
-            print(f'{Fore.LIGHTYELLOW_EX}' + ' '.join(rooms[currRoom]["map"][i]) + f'{Style.RESET_ALL}')
+            if i == 2:
+                print(f'{Fore.LIGHTYELLOW_EX}' + ' '.join(rooms[currRoom]["map"][i]) + f'{Style.RESET_ALL}' + ' ' + inventoryStr)
+            elif i == 3:
+                print(f'{Fore.LIGHTYELLOW_EX}' + ' '.join(rooms[currRoom]["map"][i]) + f'{Style.RESET_ALL}' + f'  Ghost: {ghostRoom}')
+            else:
+                print(f'{Fore.LIGHTYELLOW_EX}' + ' '.join(rooms[currRoom]["map"][i]) + f'{Style.RESET_ALL}')
     print()
 
 def move(_currRoom: int):
@@ -81,8 +87,11 @@ def removeItem(_room: int, _char: str):
             if (i > 0 and i < len(maps[currRoom])-1) and (j > 0 and j < len(maps[currRoom][i])-1) and maps[_room][i][j] == _char:
                 available.append([i, j])
 
-    chosen = random.choice(available)
-    maps[_room][chosen[0]][chosen[1]] = ' '
+    if(len(available) > 0):
+        chosen = random.choice(available)
+        maps[_room][chosen[0]][chosen[1]] = ' '
+    else: 
+        return
         
 def generateDust():
     for room in range(len(maps)):
@@ -152,7 +161,7 @@ def inspect():
             case 2:
                 inventory.append(items[i])
                 rooms[currRoom]["Items"].remove(items[i])
-                removeItem(currRoom, "!")
+                removeItem(currRoom, f"{Fore.LIGHTRED_EX}!{Fore.LIGHTYELLOW_EX}")
     displayMap()
 
 def getInventory():
@@ -174,7 +183,7 @@ def menu():
     hideCursor()
     typewrite(f"1|---> {Fore.WHITE}Move{Style.RESET_ALL}", FASTER)
 
-    if(rooms[currRoom]["inspect"]):
+    if(len(rooms[currRoom]["Items"]) > 0):
         typewrite(f"2|---> {Fore.LIGHTYELLOW_EX}Inspect{Style.RESET_ALL}", FASTER)
     else:
         typewrite(f"2|---> {Fore.BLACK}Inspect{Style.RESET_ALL}", FASTER)
@@ -185,15 +194,15 @@ def menu():
     choice = input("> ")
 
     match(choice):
-    case "1":
-        currRoom = move(currRoom)
-        return
-    case "2":
-        inspect()
-    case "3":
-        getInventory()
-    case "4":
-        sys.exit()
+        case "1":
+            currRoom = move(currRoom)
+            return
+        case "2":
+            inspect()
+        case "3":
+            getInventory()
+        case "4":
+            sys.exit()
  
 def init():
     global currRoom, ghostRoom
@@ -213,8 +222,15 @@ ghostRoom = 0
 init()
 quitGame = False
 while not quitGame:
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print("Room " + str(currRoom))
-    displayMap()
-    displayRoomMessage()
-    menu()
+    global Health
+    if currRoom != ghostRoom:
+        removeItem(currRoom, f"{Fore.RED}G{Fore.RED}")
+        moveGhost()
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print("Room " + str(currRoom))
+        displayMap()
+        displayRoomMessage()
+        menu()
+    elif currRoom == ghostRoom:
+        addItem(ghostRoom, f"{Fore.RED}G{Fore.RED}")
+        Health = fightMonster(Health)
