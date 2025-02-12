@@ -77,6 +77,52 @@ def generateDust():
             particles = ['.', ',', "'", "*", "`"]
             addItem(room, f'{Fore.LIGHTBLACK_EX}' + random.choice(particles) + f'{Fore.LIGHTYELLOW_EX}')
 
+def fightMonster(a): 
+    monsterHealth = random.randint(3, 8)
+    stay = True
+    while stay:
+        print("Monster health: " + str(monsterHealth))
+        print("Your Health: " + str(a))
+        action = input("What do you do? R: Run, F: Roll -->  ").lower()
+        if action == 'f':
+            ghostRoll = random.randint(1, 6)
+            humanRoll = random.randint(1, 6)
+            if humanRoll >= ghostRoll:
+                print('You hit the ghost for ' + str(humanRoll - ghostRoll) + ' Health')
+                monsterHealth -= (humanRoll - ghostRoll)
+            else:
+                print('You were hit by the ghost for ' + str(humanRoll - ghostRoll) + ' Health')
+                a -= (ghostRoll - humanRoll)
+        elif action == 'r':
+            ghostRoll = random.randint(1, 6)
+            print('Monster hits.')
+            print('Your HP ' + str(a))
+            stay = False
+        else:
+            print("Error - press correct keys")
+            print("Monster Hits")
+            ghostRoll = random.randint(1, 6)
+            a -= ghostRoll
+        if monsterHealth <= 0:
+            print("Monster lost")
+            wounds = random.randint(1, 3)
+            a += wounds
+            print(a)
+            stay = False
+        elif a <= 0:
+            print("You have been defeated")
+            print("Game Over")
+            quit()
+    return a
+
+def moveGhost():
+    rand = random.randint(0, 8)
+    while rand == 5:
+        rand = random.randint(0, 8)
+
+    global ghostRoom
+    ghostRoom = rand
+
 def menu():
     global currRoom
     
@@ -106,6 +152,12 @@ def init():
     currRoom = STARTING_ROOM
     addItem(0, f"{Fore.LIGHTRED_EX}!{Fore.LIGHTYELLOW_EX}")
     generateDust()
+
+
+
+# Main program
+global ghostRoom
+ghostRoom = 0
 
 init()
 quitGame = False
