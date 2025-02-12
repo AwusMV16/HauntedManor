@@ -70,6 +70,16 @@ def addItem(_room: int, _char: str):
 
     chosen = random.choice(available)
     maps[_room][chosen[0]][chosen[1]] = _char
+
+def removeItem(_room: int, _char: str):
+    available = []
+    for i in range(len(maps[currRoom])):
+        for j in range(len(maps[currRoom][i])):
+            if (i > 0 and i < len(maps[currRoom])-1) and (j > 0 and j < len(maps[currRoom][i])-1) and maps[_room][i][j] == _char:
+                available.append([i, j])
+
+    chosen = random.choice(available)
+    maps[_room][chosen[0]][chosen[1]] = ' '
         
 def generateDust():
     for room in range(len(maps)):
@@ -115,6 +125,38 @@ def fightMonster(a):
             quit()
     return a
 
+def inspect():
+    items = []
+    for item in rooms[currRoom]["Items"]:
+            items.append(item)
+    
+    if(len(items) == 0):
+        typewrite("You search the room but find nothing")
+    elif(len(items) == 1):
+        typewrite("You found " + str(len(items)) + " Item!", SLOW)
+    else:
+        typewrite("You found " + str(len(items)) + " Items!", SLOW)
+
+    for i in range(len(items)):
+        typewrite("* " + items[i], SLOW)
+        typewrite("1|---> Put it back", NORMAL)
+        typewrite("2|---> Keep the item", NORMAL)
+
+        choice = int(input("> "))
+        match(choice):
+            case 1:
+                return
+            case 2:
+                inventory.append(items[i])
+                rooms[currRoom]["Items"].remove(items[i])
+                removeItem(currRoom, "!")
+    displayMap()
+
+def getInventory():
+    global inventory
+    for i in range(len(inventory)):
+        typewrite(f"[{i+1}] {inventory[i]}", FAST)
+
 def moveGhost():
     rand = random.randint(0, 8)
     while rand == 5:
@@ -140,20 +182,26 @@ def menu():
     choice = input("> ")
 
     match(choice):
-        case "1":
-            currRoom = move(currRoom)
-        case "2":
-            print("Inspecting....") # TODO make inspect function
-        case "3":
-            sys.exit()
+    case "1":
+        currRoom = move(currRoom)
+        return
+    case "2":
+        inspect()
+    case "3":
+        getInventory()
+    case "4":
+        sys.exit()
  
 def init():
-    global currRoom
+    global currRoom, ghostRoom
     currRoom = STARTING_ROOM
-    addItem(0, f"{Fore.LIGHTRED_EX}!{Fore.LIGHTYELLOW_EX}")
+    ghostRoom = 0
+    
     generateDust()
-
-
+    for i in range(len(rooms)):
+        for _ in rooms[i]["Items"]:
+            addItem(i, f"{Fore.LIGHTRED_EX}!{Fore.LIGHTYELLOW_EX}")
+    
 
 # Main program
 global ghostRoom
