@@ -18,6 +18,9 @@ STARTING_ROOM = 5
 global currRoom
 currRoom = 5
 
+global inventory
+inventory = []
+
 def displayMap():
     for i in range(len(rooms[currRoom]["map"])):
         if i == 0 or i == len(rooms[currRoom]["map"])-1:
