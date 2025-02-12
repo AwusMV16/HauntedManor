@@ -101,13 +101,13 @@ maps = [
 ]
 
 rooms = [
-    {"n": False, "s": True , "e": True , "w": False, "inspect": True , "map": maps[0], "description": "You enter an old and dusty workshop..."},  #room 0
-    {"n": False, "s": True , "e": True , "w": True , "inspect": False, "map": maps[1], "description": "You enter a wide corridor..."},  #room 1
-    {"n": False, "s": True , "e": False, "w": True , "inspect": True , "map": maps[2], "description": "You enter the kitchen..."},  #room 2
-    {"n": True , "s": False, "e": False, "w": False, "inspect": False, "map": maps[3], "description": "You enter the storage room..."},  #room 3
-    {"n": True , "s": True , "e": True , "w": False, "inspect": False, "map": maps[4], "description": "You enter a big hall with three doors.."},  #room 4
-    {"n": True , "s": False, "e": False, "w": True , "inspect": False, "map": maps[5], "description": "You enter the abandoned manor..."},  #room 5
-    {"n": False, "s": False, "e": True , "w": False, "inspect": False, "map": maps[6], "description": "You Find the exit, But a ghost stands in your way..."},  #room 6
-    {"n": True , "s": False, "e": True , "w": True , "inspect": False, "map": maps[7], "description": "You enter a..."},  #room 7
-    {"n": False, "s": False, "e": False, "w": True , "inspect": False, "map": maps[8], "description": "You enter a..."},  #room 8
+    {"Items": [], "n": False, "s": True , "e": True , "w": False,"map": maps[0], "description": "You enter an old and dusty workshop..."},  #room 0
+    {"Items": [], "n": False, "s": True , "e": True , "w": True ,"map": maps[1], "description": "You enter a wide corridor..."},  #room 1
+    {"Items": [], "n": False, "s": True , "e": False, "w": True , "map": maps[2], "description": "You enter the kitchen..."},  #room 2
+    {"Items": [], "n": True , "s": False, "e": False, "w": False, "map": maps[3], "description": "You enter the storage room..."},  #room 3
+    {"Items": [], "n": True , "s": True , "e": True , "w": False, "map": maps[4], "description": "You enter a big hall with three doors.."},  #room 4
+    {"Items": ["Note"], "n": True , "s": False, "e": False, "w": True , "map": maps[5], "description": "You enter the abandoned manor..."},  #room 5
+    {"Items": [], "n": False, "s": False, "e": True , "w": False, "map": maps[6], "description": "You Find the exit, But a ghost stands in your way..."},  #room 6
+    {"Items": [], "n": True , "s": False, "e": True , "w": True , "map": maps[7], "description": "You enter a..."},  #room 7
+    {"Items": ["Key"], "n": False, "s": False, "e": False, "w": True , "map": maps[8], "description": "You enter a..."},  #room 8
 ]
